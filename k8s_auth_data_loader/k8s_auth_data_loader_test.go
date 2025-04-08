@@ -58,7 +58,7 @@ func setupTestFiles() {
 }
 
 func cleanupTestFiles() {
-	os.RemoveAll(testDir)
+	_ = os.RemoveAll(testDir)
 }
 
 // Tests for Load method
