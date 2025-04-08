@@ -11,14 +11,20 @@ import (
 	"github.com/kaudit/auth"
 )
 
+// KubeConfig implements the auth.Authenticator interface using a K8sAuthLoader.
+// It loads kubeconfig data on demand and constructs both typed and dynamic clients from it.
 type KubeConfig struct {
 	authLoader auth.K8sAuthLoader
 }
 
+// NewKubeConfigAuthenticator returns an implementation of the auth.Authenticator interface.
+// It uses the provided K8sAuthLoader to load kubeconfig data on demand.
 func NewKubeConfigAuthenticator(loader auth.K8sAuthLoader) (auth.Authenticator, error) {
 	return &KubeConfig{authLoader: loader}, nil
 }
 
+// NativeAPI returns a typed Kubernetes client constructed from kubeconfig data.
+// It returns an error if loading the configuration or creating the client fails.
 func (k *KubeConfig) NativeAPI() (kubernetes.Interface, error) {
 	kubeConfig, err := k.authLoader.Load()
 	if err != nil {
@@ -38,6 +44,8 @@ func (k *KubeConfig) NativeAPI() (kubernetes.Interface, error) {
 	return i, nil
 }
 
+// DynamicAPI returns a dynamic Kubernetes client constructed from kubeconfig data.
+// It returns an error if loading the configuration or creating the client fails.
 func (k *KubeConfig) DynamicAPI() (dynamic.Interface, error) {
 	kubeConfig, err := k.authLoader.Load()
 	if err != nil {
@@ -57,6 +65,8 @@ func (k *KubeConfig) DynamicAPI() (dynamic.Interface, error) {
 	return d, nil
 }
 
+// getRestConfig constructs a *rest.Config object from the given kubeconfig data.
+// It returns an error if the kubeconfig is invalid or cannot be parsed.
 func getRestConfig(kubeConfig []byte) (*rest.Config, error) {
 	cfg, err := clientcmd.Load(kubeConfig)
 	if err != nil {
