@@ -1,4 +1,4 @@
-package k8s_auth_data_loader
+package k8sauthdataloader
 
 import (
 	"os"

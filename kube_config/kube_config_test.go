@@ -1,4 +1,4 @@
-package kube_config
+package kubeconfig
 
 import (
 	"errors"
@@ -10,7 +10,7 @@ import (
 	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/kubernetes"
 
-	"github.com/kaudit/auth/mocks/K8sAuthLoader"
+	mocksauth "github.com/kaudit/auth/mocks/K8sAuthLoader"
 )
 
 func TestNewKubeConfigAuthenticator(t *testing.T) {
@@ -21,7 +21,7 @@ func TestNewKubeConfigAuthenticator(t *testing.T) {
 	authenticator, err := NewKubeConfigAuthenticator(mockLoader)
 
 	// Assert
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.NotNil(t, authenticator)
 }
 
@@ -56,7 +56,7 @@ users:
 		client, err := authenticator.NativeAPI()
 
 		// Assert
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotNil(t, client)
 		assert.Implements(t, (*kubernetes.Interface)(nil), client)
 	})
@@ -73,7 +73,7 @@ users:
 		client, err := authenticator.NativeAPI()
 
 		// Assert
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Contains(t, err.Error(), "authLoader.Load failed")
 		assert.Nil(t, client)
 	})
@@ -109,7 +109,7 @@ users:
 		client, err := authenticator.NativeAPI()
 
 		// Assert
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Contains(t, err.Error(), "clientCfg.ClientConfig failed")
 		assert.Nil(t, client)
 	})
@@ -128,7 +128,7 @@ users:
 		client, err := authenticator.NativeAPI()
 
 		// Assert
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Contains(t, err.Error(), "getRestConfig failed")
 		assert.Nil(t, client)
 	})
@@ -165,7 +165,7 @@ users:
 		client, err := authenticator.DynamicAPI()
 
 		// Assert
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NotNil(t, client)
 		assert.Implements(t, (*dynamic.Interface)(nil), client)
 	})
@@ -182,7 +182,7 @@ users:
 		client, err := authenticator.DynamicAPI()
 
 		// Assert
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Contains(t, err.Error(), "authLoader.Load failed")
 		assert.Nil(t, client)
 	})
@@ -218,7 +218,7 @@ users:
 		client, err := authenticator.DynamicAPI()
 
 		// Assert
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Contains(t, err.Error(), "clientCfg.ClientConfig failed")
 		assert.Nil(t, client)
 	})
@@ -237,7 +237,7 @@ users:
 		client, err := authenticator.DynamicAPI()
 
 		// Assert
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Contains(t, err.Error(), "getRestConfig failed")
 		assert.Nil(t, client)
 	})
