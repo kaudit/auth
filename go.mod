@@ -3,7 +3,7 @@ module github.com/kaudit/auth
 go 1.23.0
 
 require (
-	github.com/kaudit/val v0.2.1
+	github.com/kaudit/val v0.2.2
 	github.com/stretchr/testify v1.10.0
 	k8s.io/client-go v0.32.3
 )
