@@ -20,13 +20,6 @@ Make sure you have Go 1.23 or later installed.
 To add this library to your Go project, use the `go get` command:
 
 ```bash
-# Install dependencies
-go get github.com/kaudit/val
-go get k8s.io/client-go
-go get k8s.io/api
-go get k8s.io/apimachinery
-
-# Install the main library
 go get github.com/kaudit/auth
 ```
 
@@ -35,45 +28,61 @@ go get github.com/kaudit/auth
 ### Basic Usage
 
 ```go
-// Create a kubeconfig loader
-loader := k8s_auth_data_loader.NewK8sConfigLoader("/path/to/kubeconfig")
+import (
+    "context"
+    
+    "github.com/kaudit/auth"
+    "github.com/kaudit/auth/k8s-auth-data-loader"
+    "github.com/kaudit/auth/kube-config"
+    "k8s.io/apimachinery/pkg/apis/meta/v1"
+)
 
-// Create an authenticator
-authenticator, err := kube_config.NewKubeConfigAuthenticator(loader)
-if err != nil {
-    // Handle error
-}
-
-// Get a typed Kubernetes client
-clientset, err := authenticator.NativeAPI()
-if err != nil {
-    // Handle error
-}
-
-// Use the client
-pods, err := clientset.CoreV1().Pods("default").List(context.TODO(), metav1.ListOptions{})
-
-// Or get a dynamic client
-dynamicClient, err := authenticator.DynamicAPI()
-if err != nil {
-    // Handle error
+func main() {
+    // Create a kubeconfig loader
+    loader := k8sauthloader.NewK8sConfigLoader("/path/to/kubeconfig")
+    
+    // Create an authenticator
+    authenticator, err := kubeconfig.NewKubeConfigAuthenticator(loader)
+    if err != nil {
+        // Handle error
+    }
+    
+    // Get a typed Kubernetes client
+    clientset, err := authenticator.NativeAPI()
+    if err != nil {
+        // Handle error
+    }
+    
+    // Use the client
+    pods, err := clientset.CoreV1().Pods("default").List(context.TODO(), metav1.ListOptions{})
+    
+    // Or get a dynamic client
+    dynamicClient, err := authenticator.DynamicAPI()
+    if err != nil {
+        // Handle error
+    }
 }
 ```
 
 ### Custom Configuration Path
 
-You can also load a kubeconfig from a specific path:
-
 ```go
-// Create a kubeconfig loader with default path
-loader := k8s_auth_data_loader.NewK8sConfigLoader("~/.kube/config")
+import (
+    "github.com/kaudit/auth/k8s-auth-data-loader"
+)
 
-// Load a specific config file
-configData, err := loader.LoadWithPath("/path/to/another/kubeconfig")
-if err != nil {
-    // Handle error
+func main() {
+    // Create a kubeconfig loader with default path
+    loader := k8sauthloader.NewK8sConfigLoader("~/.kube/config")
+    
+    // Load a specific config file
+    configData, err := loader.LoadWithPath("/path/to/another/kubeconfig")
+    if err != nil {
+        // Handle error
+    }
 }
 ```
+
 ## API Documentation
 
 ### Authenticator
@@ -124,13 +133,12 @@ Returns a new instance of K8sAuthDataLoader.
 #### `Load() ([]byte, error)`
 Reads and returns kubeconfig data from the loader's configured path.
 - Validates that the path refers to an accessible file
-- Returns raw kubeconfig data as a byte array or an error if validation or reading fails
+- Returns raw kubeconfig data or an error if loading fails
 
 #### `LoadWithPath(path string) ([]byte, error)`
 Reads and returns kubeconfig data from the specified path.
 - `path`: File path to a kubeconfig file (must be valid and accessible)
-- Validates that the path refers to an accessible file
-- Returns raw kubeconfig data as a byte array or an error if validation or reading fails
+- Returns raw kubeconfig data or an error if loading fails
 
 ## Architecture
 
